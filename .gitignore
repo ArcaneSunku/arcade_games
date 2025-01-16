@@ -1,0 +1,24 @@
+# Build Directories
+bin/
+bin-int/
+
+# Visual Studio Directories/Files
+.vs/
+
+*.sln
+*.vcxproj*
+
+# In Prog Assets
+*.xcf
+
+# ImGui Generated Files
+imgui.ini
+imgui*.ini
+
+# Log Files
+.log
+Arcane.log
+Arcane*.log
+
+# Profiling Files
+*Profile-*.json
