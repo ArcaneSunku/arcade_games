@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Arcane.h>
-
-#include <imgui.h>
+#include "game/GameLogic.h"
 
 class GameLayer : public Arcane::Layer
 {
@@ -24,7 +22,10 @@ private:
 
 private:
 	Arcane::OrthoCameraController* m_CamController;
-	std::unordered_map<std::string, Arcane::Shared<Arcane::Texture2D>> m_TextureMap;
+
+	Arcane::Unique<Arcane::SoundDevice> m_SndDevice;
+	Arcane::Unique<Arcane::SoundLibrary> m_SndLib;
 
 	ImFont* m_Font;
+	Game m_Game;
 };

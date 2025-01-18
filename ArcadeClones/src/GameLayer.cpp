@@ -1,20 +1,12 @@
 #include "GameLayer.h"
 
-enum State : uint32_t
-{
-	Menu = 0,
-	Asteroids,
-	PacMan,
-	BrickBreak
-};
-
 enum MenuState : uint32_t
 {
 	NotActive = 0,
 	Main, GameSelect, About
 };
 
-static State s_State = State::Menu;
+static Game::State s_State = Game::State::Menu;
 static MenuState s_MenuState = MenuState::Main;
 
 GameLayer::GameLayer() :
@@ -33,30 +25,28 @@ GameLayer::~GameLayer()
 void GameLayer::OnAttach()
 {
 	ARC_PROFILE_FUNCTION();
+	m_SndDevice = Arcane::SoundDevice::Create();
+	m_SndLib = Arcane::SoundLibrary::Create();
 
-	m_TextureMap["bb_blocks"] = Arcane::Texture2D::Create("assets/textures/brickbreak-clone/blocks.png");
-	m_TextureMap["bb_sprites"] = Arcane::Texture2D::Create("assets/textures/brickbreak-clone/sprites.png");
-
-	m_TextureMap["astr_ship"] = Arcane::Texture2D::Create("assets/textures/asteroids-clone/ship.png");
-	m_TextureMap["astr_alien_ship"] = Arcane::Texture2D::Create("assets/textures/asteroids-clone/enemy_ships.png");
+	m_Game.Init(m_SndLib);
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
 	m_Font = io.Fonts->AddFontFromFileTTF("assets/fonts/ARCADEPI.ttf", 36);
-
 }
 
 void GameLayer::OnDetach()
 {
 	ARC_PROFILE_FUNCTION();
 
+	m_Game.Dispose();
 	m_Font->ClearOutputData();
-	m_TextureMap.clear();
 }
 
 void GameLayer::OnUpdate(Arcane::Timestep ts)
 {
 	ARC_PROFILE_FUNCTION();
+	m_Game.OnUpdate(ts, *m_CamController, s_State);
 	m_CamController->OnUpdate(ts);
 
 	Arcane::RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
@@ -64,6 +54,8 @@ void GameLayer::OnUpdate(Arcane::Timestep ts)
 
 	Arcane::Renderer2D::ResetStats();
 	Arcane::Renderer2D::BeginScene(*m_CamController->GetCamera());
+
+	m_Game.OnRender(ts, *m_CamController, s_State);
 
 	Arcane::Renderer2D::EndScene();
 }
@@ -83,27 +75,21 @@ void GameLayer::OnImGuiRender()
 	winFlags |= ImGuiWindowFlags_NoCollapse;
 	winFlags |= ImGuiWindowFlags_NoBackground;
 
+	//
 	switch (s_State)
 	{
-	case Menu:
+	case Game::Menu:
 	{
-
 		switch (s_MenuState)
 		{
-		case MenuState::Main: MainMenu(winFlags); break;
-		case MenuState::GameSelect: GameSelect(winFlags); break;
-		case MenuState::About: About(winFlags); break;
+			case MenuState::Main: MainMenu(winFlags); break;
+			case MenuState::GameSelect: GameSelect(winFlags); break;
+			case MenuState::About: About(winFlags); break;
 		}
-
 		break;
 	}
-	case Asteroids:
-		break;
-	case PacMan:
-		break;
-	case BrickBreak:
-		break;
 	default:
+		m_Game.OnImGuiRender(winFlags, s_State);
 		break;
 	}
 
@@ -167,7 +153,8 @@ void GameLayer::MainMenu(ImGuiWindowFlags flags)
 
 	if (playGame)
 	{
-		s_MenuState = MenuState::GameSelect;
+		s_MenuState = MenuState::NotActive;
+		s_State = Game::Asteroids;
 		return;
 	}
 
@@ -180,7 +167,7 @@ void GameLayer::MainMenu(ImGuiWindowFlags flags)
 
 void GameLayer::GameSelect(ImGuiWindowFlags flags)
 {
-
+	
 }
 
 void GameLayer::About(ImGuiWindowFlags flags)

@@ -11,13 +11,14 @@ workspace "ArcadeClassics"
 	APP_INCLUDE_DIR["GLM"]     = "ArcadeClones/vendors/Arcane/Arcane/vendors/glm"
 	APP_INCLUDE_DIR["SPD_LOG"] = "ArcadeClones/vendors/Arcane/Arcane/vendors/spdlog/include"
 	APP_INCLUDE_DIR["IMGUI"]   = "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
+	APP_INCLUDE_DIR["OpenAL"]  = "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft/include"
+	APP_INCLUDE_DIR["libsndfile"]  = "ArcadeClones/vendors/Arcane/Arcane/vendors/libsndfile/include"
 	APP_INCLUDE_DIR["ARCANE"]  = "ArcadeClones/vendors/Arcane/Arcane/src"
 	
 	group "Dependencies"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glfw"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glad"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
-		include "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft"
 		include "ArcadeClones/vendors/Arcane"
 	
 	group ""
@@ -47,7 +48,9 @@ project "ArcadeClones"
 		"%{APP_INCLUDE_DIR.ARCANE}",
 		"%{APP_INCLUDE_DIR.SPD_LOG}",
 		"%{APP_INCLUDE_DIR.IMGUI}",
-		"%{APP_INCLUDE_DIR.GLM}",
+		"%{APP_INCLUDE_DIR.OpenAL}",
+		"%{APP_INCLUDE_DIR.libsndfile}",
+		"%{APP_INCLUDE_DIR.GLM}"
 	}
 	
 	links {
@@ -58,17 +61,14 @@ project "ArcadeClones"
 		systemversion "latest"
 		
 	filter "configurations:Debug"
-		defines "ARC_DEBUG"
 		runtime "Debug"
 		symbols "on"
 		
 	filter "configurations:Release"
-		defines "ARC_RELEASE"
 		runtime "Release"
 		optimize "on"
 		
 	filter "configurations:Distribution"
-		defines "ARC_DIST"
 		runtime "Release"
 		optimize "on"
 		
