@@ -48,7 +48,6 @@ void GameLayer::OnUpdate(Arcane::Timestep ts)
 	ARC_PROFILE_FUNCTION();
 
 	m_Game->OnUpdate(ts, *m_CamController, s_State, s_MenuState);
-	m_CamController->OnUpdate(ts);
 
 	Arcane::RenderCMD::SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 	Arcane::RenderCMD::Clear(true);
@@ -63,6 +62,7 @@ void GameLayer::OnUpdate(Arcane::Timestep ts)
 
 void GameLayer::OnEvent(Arcane::Event& event)
 {
+	m_Game->OnEvent(event);
 	m_CamController->OnEvent(event);
 }
 
@@ -134,8 +134,8 @@ void GameLayer::MainMenu(ImGuiWindowFlags flags)
 	ImGui::PopFont();
 	ImGui::End();
 
-	fontSize = m_Fonts["arcade36"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, "Play");
-	tSize = { fontSize.x + m_Fonts["arcade36"]->FontSize, fontSize.y };
+	fontSize = m_Fonts["arcade16"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, "About");
+	tSize = { fontSize.x + m_Fonts["arcade16"]->FontSize, fontSize.y };
 
 	ImGui::SetNextWindowPos({ center.x - tSize.x * 0.5f, winPos.y + tSize.y + 50 });
 	ImGui::SetWindowSize({ 200, 200 });
@@ -145,9 +145,10 @@ void GameLayer::MainMenu(ImGuiWindowFlags flags)
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.2f, 0.2f, 0.2f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.72f, 0.2f, 0.3f, 0.2f));
 
-	ImGui::PushFont(m_Fonts["arcade36"]);
-	bool playGame = ImGui::Button("Play", { 100, 50 });
-	bool exitGame = ImGui::Button("Exit", { 100, 50 });
+	ImGui::PushFont(m_Fonts["arcade16"]);
+	bool playGame = ImGui::Button("Play", { 100, 25 });
+	bool about = ImGui::Button("About", { 100, 25 });
+	bool exitGame = ImGui::Button("Exit", { 100, 25 });
 	ImGui::PopFont();
 
 	ImGui::PopStyleColor(3);
@@ -159,17 +160,24 @@ void GameLayer::MainMenu(ImGuiWindowFlags flags)
 		return;
 	}
 
+	if (about)
+	{
+		s_MenuState = MenuState::About;
+		return;
+	}
+
 	if (exitGame)
 	{
 		Arcane::Application::Get().Stop();
+		s_MenuState = MenuState::NotActive;
 		return;
 	}
 }
 
 void GameLayer::GameSelect(ImGuiWindowFlags flags)
 {
-	float fntSize = m_Fonts["arcade36"]->FontSize;
-	ImVec2 fontSize = m_Fonts["arcade36"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, "Brick Breaker");
+	float fntSize = m_Fonts["arcade16"]->FontSize;
+	ImVec2 fontSize = m_Fonts["arcade16"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, "Brick Breaker");
 
 	ImGuiViewport* main = ImGui::GetWindowViewport();
 	ImVec2 tSize = { fontSize.x + fntSize, fontSize.y };
@@ -186,8 +194,8 @@ void GameLayer::GameSelect(ImGuiWindowFlags flags)
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.72f, 0.2f, 0.3f, 0.2f));
 
 	ImGui::PushFont(m_Fonts["arcade16"]);
-	bool asteroids = ImGui::Button("Asteroids", { 100, 50 });
-	bool back = ImGui::Button("Back", { 100, 50 });
+	bool asteroids = ImGui::Button("Asteroids", { 100, 25 });
+	bool back	   = ImGui::Button("Back", { 100, 25 });
 	ImGui::PopFont();
 
 	ImGui::PopStyleColor(3);
@@ -209,5 +217,58 @@ void GameLayer::GameSelect(ImGuiWindowFlags flags)
 
 void GameLayer::About(ImGuiWindowFlags flags)
 {
+	std::string about = "This game was made with the Arcane Framework.\n"
+						"\tIt was developed by ArcaneSunku(Tahnner).";
 
+	float fntSize = m_Fonts["arcade16"]->FontSize;
+	ImVec2 fontSize = m_Fonts["arcade16"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, about.c_str());
+
+	ImGuiViewport* main = ImGui::GetWindowViewport();
+	ImVec2 tSize = { fontSize.x + fntSize, fontSize.y };
+	ImVec2 center = main->GetCenter();
+
+	ImVec2 winPos = { center.x - tSize.x * 0.5f, center.y - (main->Size.y - tSize.y) * 0.075f };
+
+	if (winPos.x <= main->Pos.x) winPos.x = main->Pos.x;
+	if (winPos.y <= main->Pos.y) winPos.y = main->Pos.y;
+
+	ImGui::SetNextWindowPos(winPos);
+	ImGui::SetNextWindowSize({ tSize.x, tSize.y });
+
+	ImGui::Begin("AboutScreen", (bool*)0, flags);
+
+	auto winSize = ImGui::GetWindowSize();
+	ImGui::SetCursorPosX((winSize.x - fontSize.x) * 0.5f);
+	ImGui::SetCursorPosY((winSize.y - fontSize.y) * 0.5f);
+
+	ImGui::PushFont(m_Fonts["arcade16"]);
+	ImGui::Text(about.c_str());
+	ImGui::PopFont();
+	ImGui::End();
+
+	fontSize = m_Fonts["arcade16"]->CalcTextSizeA(fntSize, FLT_MAX, 0.0f, "Back");
+	tSize = { fontSize.x + fntSize, fontSize.y };
+
+	ImGui::SetNextWindowPos({ center.x - (150.0f / 2.0f), winPos.y + 100.0f });
+	ImGui::SetNextWindowSize({ 150, 200 });
+
+	ImGui::Begin("Buttons", (bool*)0, flags);
+	winSize = ImGui::GetWindowSize();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.2f, 0.2f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.72f, 0.2f, 0.3f, 0.2f));
+
+	ImGui::PushFont(m_Fonts["arcade16"]);
+	bool back = ImGui::Button("Back", { 100, 25 });
+	ImGui::PopFont();
+
+	ImGui::PopStyleColor(3);
+	ImGui::End();
+
+	if (back)
+	{
+		s_MenuState = MenuState::Main;
+		return;
+	}
 }

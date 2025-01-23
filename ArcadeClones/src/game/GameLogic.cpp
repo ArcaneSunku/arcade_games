@@ -17,12 +17,16 @@ void Game::Dispose()
 {
 	m_TextureMap.clear();
 	m_SoundMap.clear();
+
+	delete m_LaserSource;
 }
 
-void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, Game::State& state, MenuState& menuState)
+void Game::OnUpdate(Arcane::Timestep ts, Arcane::OrthoCameraController& camControl, Game::State& state, MenuState& menuState)
 {
 	if (state == Game::State::Menu) return;
-	if (m_MenuSet)
+	camControl.OnUpdate(ts);
+
+	if (m_MenuSet && m_MenuState != MenuState::NotActive)
 	{
 		menuState = m_MenuState;
 		state = Game::State::Menu;
@@ -34,11 +38,8 @@ void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& ca
 	{
 	case Asteroids: 
 	{
-		if (Arcane::Input::IsKeyPressed(Arcane::Key::Escape))
-		{
-			state = Game::State::Menu;
-			menuState = MenuState::GameSelect;
-		}
+		if (Arcane::Input::IsKeyPressed(Arcane::Key::Space) && !m_LaserSource->IsPlaying())
+			m_LaserSource->Play(m_SoundMap["laser"]);
 
 		break;
 	}
@@ -47,17 +48,10 @@ void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& ca
 	}
 }
 
-void Game::OnEvent(Arcane::Event& e, const Game::State& state)
+void Game::OnEvent(Arcane::Event& e)
 {
 	Arcane::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Arcane::KeyPressedEvent>(ARC_BIND_EVENT_FN(Game::OnKeyPressed));
-
-	switch (state)
-	{
-	case Asteroids: break;
-	case PacMan: break;
-	case BrickBreak: break;
-	}
 }
 
 void Game::OnRender(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, const Game::State& state)

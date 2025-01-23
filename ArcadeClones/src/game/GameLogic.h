@@ -23,14 +23,14 @@ public:
 	};
 
 public:
-	Game() : m_MenuState() {}
+	Game() : m_MenuState(), m_LaserSource(nullptr) {}
 	~Game() {}
 
 	void Init(const Arcane::Shared<Arcane::SoundLibrary>& soundLib);
 	void Dispose();
 
-	void OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, Game::State& gameState, MenuState& menuState);
-	void OnEvent(Arcane::Event& e, const Game::State& state);
+	void OnUpdate(Arcane::Timestep ts, Arcane::OrthoCameraController& camControl, Game::State& gameState, MenuState& menuState);
+	void OnEvent(Arcane::Event& e);
 
 	void OnRender(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, const Game::State& state);
 	void OnImGuiRender(ImGuiWindowFlags flags, const Game::State& state);
