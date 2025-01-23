@@ -1,10 +1,8 @@
 #include "GameLogic.h"
 
-void Game::Init(const Arcane::Unique<Arcane::SoundLibrary>& soundLib)
+void Game::Init(const Arcane::Shared<Arcane::SoundLibrary>& soundLib)
 {
-	m_SndLib = soundLib.get();
-
-	m_SoundMap["laser"] = m_SndLib->Load("assets/sound/laserShoot.wav");
+	m_SoundMap["laser"] = soundLib->Load("assets/sound/laserShoot.wav");
 
 	m_TextureMap["bb_blocks"] = Arcane::Texture2D::Create("assets/textures/brickbreak-clone/blocks.png");
 	m_TextureMap["bb_sprites"] = Arcane::Texture2D::Create("assets/textures/brickbreak-clone/sprites.png");
@@ -18,16 +16,29 @@ void Game::Init(const Arcane::Unique<Arcane::SoundLibrary>& soundLib)
 void Game::Dispose()
 {
 	m_TextureMap.clear();
+	m_SoundMap.clear();
 }
 
-void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, const Game::State& state)
+void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, Game::State& state, MenuState& menuState)
 {
+	if (state == Game::State::Menu) return;
+	if (m_MenuSet)
+	{
+		menuState = m_MenuState;
+		state = Game::State::Menu;
+		m_MenuSet = false;
+		return;
+	}
+
 	switch (state)
 	{
 	case Asteroids: 
 	{
-		if (Arcane::Input::IsKeyPressed(Arcane::Key::Space) && !m_LaserSource->IsPlaying())
-			m_LaserSource->Play(m_SoundMap["laser"]);
+		if (Arcane::Input::IsKeyPressed(Arcane::Key::Escape))
+		{
+			state = Game::State::Menu;
+			menuState = MenuState::GameSelect;
+		}
 
 		break;
 	}
@@ -38,6 +49,9 @@ void Game::OnUpdate(Arcane::Timestep ts, const Arcane::OrthoCameraController& ca
 
 void Game::OnEvent(Arcane::Event& e, const Game::State& state)
 {
+	Arcane::EventDispatcher dispatcher(e);
+	dispatcher.Dispatch<Arcane::KeyPressedEvent>(ARC_BIND_EVENT_FN(Game::OnKeyPressed));
+
 	switch (state)
 	{
 	case Asteroids: break;
@@ -64,4 +78,16 @@ void Game::OnImGuiRender(ImGuiWindowFlags flags, const Game::State& state)
 	case PacMan: break;
 	case BrickBreak: break;
 	}
+}
+
+bool Game::OnKeyPressed(Arcane::KeyPressedEvent& e)
+{
+	if (e.GetKeyCode() == Arcane::Key::Escape)
+	{
+		// TODO: Handle this elsewhere and in a different manner
+		m_MenuState = MenuState::GameSelect;
+		m_MenuSet = true;
+	}
+
+	return false;
 }

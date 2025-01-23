@@ -3,10 +3,10 @@
 
 #include "GameLayer.h"
 
-class Playground : public Arcane::Application
+class Arcade : public Arcane::Application
 {
 public:
-	Playground(const Arcane::WindowProps& props) :
+	Arcade(const Arcane::WindowProps& props) :
 		Application(props)
 	{
 		PushLayer(new GameLayer);
@@ -15,5 +15,5 @@ public:
 
 Arcane::Application* Arcane::CreateApplication()
 {
-	return new Playground({"Playground App"});
+	return new Arcade({"Arcade Classics"});
 }

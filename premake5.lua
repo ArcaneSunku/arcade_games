@@ -8,17 +8,19 @@ workspace "ArcadeClassics"
 	OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 	
 	APP_INCLUDE_DIR = {}
-	APP_INCLUDE_DIR["GLM"]     = "ArcadeClones/vendors/Arcane/Arcane/vendors/glm"
-	APP_INCLUDE_DIR["SPD_LOG"] = "ArcadeClones/vendors/Arcane/Arcane/vendors/spdlog/include"
-	APP_INCLUDE_DIR["IMGUI"]   = "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
-	APP_INCLUDE_DIR["OpenAL"]  = "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft/include"
+	APP_INCLUDE_DIR["GLM"]         = "ArcadeClones/vendors/Arcane/Arcane/vendors/glm"
+	APP_INCLUDE_DIR["SPD_LOG"]     = "ArcadeClones/vendors/Arcane/Arcane/vendors/spdlog/include"
+	APP_INCLUDE_DIR["IMGUI"]       = "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
+	APP_INCLUDE_DIR["OpenAL"]      = "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft/include"
 	APP_INCLUDE_DIR["libsndfile"]  = "ArcadeClones/vendors/Arcane/Arcane/vendors/libsndfile/include"
-	APP_INCLUDE_DIR["ARCANE"]  = "ArcadeClones/vendors/Arcane/Arcane/src"
+	APP_INCLUDE_DIR["ARCANE"]      = "ArcadeClones/vendors/Arcane/Arcane/src"
 	
 	group "Dependencies"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glfw"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glad"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
+		include "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft"
+
 		include "ArcadeClones/vendors/Arcane"
 	
 	group ""
@@ -45,12 +47,12 @@ project "ArcadeClones"
 	
 	includedirs 
 	{
-		"%{APP_INCLUDE_DIR.ARCANE}",
 		"%{APP_INCLUDE_DIR.SPD_LOG}",
 		"%{APP_INCLUDE_DIR.IMGUI}",
 		"%{APP_INCLUDE_DIR.OpenAL}",
 		"%{APP_INCLUDE_DIR.libsndfile}",
-		"%{APP_INCLUDE_DIR.GLM}"
+		"%{APP_INCLUDE_DIR.GLM}",
+		"%{APP_INCLUDE_DIR.ARCANE}"
 	}
 	
 	links {

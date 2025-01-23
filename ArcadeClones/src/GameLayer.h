@@ -24,8 +24,8 @@ private:
 	Arcane::OrthoCameraController* m_CamController;
 
 	Arcane::Unique<Arcane::SoundDevice> m_SndDevice;
-	Arcane::Unique<Arcane::SoundLibrary> m_SndLib;
+	Arcane::Shared<Arcane::SoundLibrary> m_SndLib;
 
-	ImFont* m_Font;
-	Game m_Game;
+	std::unordered_map<std::string, ImFont*> m_Fonts;
+	Game* m_Game;
 };
