@@ -1,39 +1,24 @@
 #pragma once
 
-#include <Arcane.h>
-
-#include <imgui.h>
-
-
-enum MenuState : uint32_t
-{
-	NotActive = 0,
-	Main, GameSelect, About
-};
+#include "Asteroids.h"
 
 class Game
 {
 public:
-	enum State : uint32_t
-	{
-		Menu = 0,
-		Asteroids,
-		PacMan,
-		BrickBreak
-	};
 
 public:
-	Game() : m_MenuState(), m_LaserSource(nullptr) {}
+	Game() : m_MenuState() {}
 	~Game() {}
 
 	void Init(const Arcane::Shared<Arcane::SoundLibrary>& soundLib);
+	void StartGame(GameState& state, Arcane::Shared<Arcane::OrthoCameraController>&);
 	void Dispose();
 
-	void OnUpdate(Arcane::Timestep ts, Arcane::OrthoCameraController& camControl, Game::State& gameState, MenuState& menuState);
+	void OnUpdate(Arcane::Timestep ts, Arcane::Shared<Arcane::OrthoCameraController>& camControl, GameState& gameState, MenuState& menuState);
 	void OnEvent(Arcane::Event& e);
 
-	void OnRender(Arcane::Timestep ts, const Arcane::OrthoCameraController& camControl, const Game::State& state);
-	void OnImGuiRender(ImGuiWindowFlags flags, const Game::State& state);
+	void OnRender(Arcane::Timestep ts, const Arcane::Shared<Arcane::OrthoCameraController>& camControl, const GameState& state);
+	void OnImGuiRender(ImGuiWindowFlags flags, const GameState& state);
 
 private:
 	bool OnKeyPressed(Arcane::KeyPressedEvent& e);
@@ -42,7 +27,9 @@ private:
 	std::unordered_map<std::string, Arcane::Shared<Arcane::Texture2D>> m_TextureMap;
 	std::unordered_map<std::string, ALuint> m_SoundMap;
 
-	Arcane::SoundSource* m_LaserSource;
+	Arcane::Unique<SpaceGame::Gameplay> m_Asteroids;
+
 	MenuState m_MenuState;
+	GameState m_CurrentGame;
 	bool m_MenuSet = false;
 };

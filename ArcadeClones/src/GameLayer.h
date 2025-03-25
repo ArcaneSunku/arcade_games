@@ -21,7 +21,7 @@ private:
 	void About(ImGuiWindowFlags flags = 0);
 
 private:
-	Arcane::OrthoCameraController* m_CamController;
+	Arcane::Shared<Arcane::OrthoCameraController> m_CamController;
 
 	Arcane::Unique<Arcane::SoundDevice> m_SndDevice;
 	Arcane::Shared<Arcane::SoundLibrary> m_SndLib;

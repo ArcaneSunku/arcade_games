@@ -19,7 +19,6 @@ workspace "ArcadeClassics"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glfw"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/glad"
 		include "ArcadeClones/vendors/Arcane/Arcane/vendors/imgui"
-		include "ArcadeClones/vendors/Arcane/Arcane/vendors/openal-soft"
 
 		include "ArcadeClones/vendors/Arcane"
 	
