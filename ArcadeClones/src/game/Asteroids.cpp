@@ -12,6 +12,7 @@ namespace SpaceGame
 		std::unordered_map<std::string, ALuint>& soundMap) :
 		m_Score(0), m_Lives(3), m_Level(1), m_Started(false), m_Paused(false)
 	{
+		camController->SetZoom(2.0f);
 		m_Textures["ships"] = textureMap["astr_ships"];
 		m_Textures["rocks"] = textureMap["astr_rocks"];
 
@@ -35,13 +36,11 @@ namespace SpaceGame
 			{
 				std::uniform_real_distribution<float> sizeDist(0.005f, 0.0075f);
 				std::uniform_real_distribution<float> rotDist(0.0f, 360.0f);
-				std::uniform_real_distribution<float> postDist(-camController->GetAspectRatio() * camController->GetZoom() * 300.0f, camController->GetAspectRatio() * camController->GetZoom() * 300.0f);
+				std::uniform_real_distribution<float> postDist(-camController->GetAspectRatio() * camController->GetZoom() * 100.0f, camController->GetAspectRatio() * camController->GetZoom() * 100.0f);
 
 				m_Stars.push_back(Arcane::CreateShared<Star>(glm::vec2((x + postDist(rng)) * sizeDist(rng) * 2, (y + postDist(rng)) * sizeDist(rng) * 2), glm::vec2(sizeDist(rng), sizeDist(rng)), rotDist(rng)));
 			}
 		}
-
-		camController->SetZoom(2.0f);
 	}
 
 	Gameplay::~Gameplay()
